@@ -105,7 +105,20 @@ def show_history():
                 rows = cur.fetchall()
 
         return render_template('display_history.html', items = rows, uname = username)
-        
+
+
+#TO DELETE LOGGED-IN USER'S HISTORY
+@app.route('/deletehistory', methods=['GET', 'POST'])
+def del_history():
+        return render_template('deletehistory.html')
+@app.route('/confirm_delete_user_info', methods = ['GET', 'POST'])
+def conf_del_user_history():
+        username = request.form['UserName']
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('DELETE FROM User_Info where UserId =?''',(username,))
+                con.commit
+        return render_template('confuserinfodelete.html', uname=username)
 #TO PLAY AROUND WITH MOVIE RATING WITHOUT LOGIN
 @app.route('/results', methods=['POST'])
 def predict():
