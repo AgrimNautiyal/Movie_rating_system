@@ -14,6 +14,64 @@ app = Flask(__name__)
 def index():
 	return render_template('LandingPage.html')
 
+#TO CONTROL ADMIN ACCSS RIGHTS AND LOGIN
+@app.route('/admin', methods =['GET', 'POST'])
+def admin():
+        return render_template('adminlogin.html')
+
+@app.route('/admincheck_cred', methods = ['GET', 'POST'])
+def admin_check():
+        username  = request.form['UserName']
+        password = request.form['Password']
+
+
+        if username == 'admin':
+                if password == '123456789':
+                        return render_template('adminportal.html')
+                else:
+                        return render_template('unsuccessfulloginattempt.html')
+        else:
+                return render_template('unsuccessfulloginattempt.html')
+
+#ADMIN FUNCTION OPTIONS :
+@app.route('/deluseracc', methods = ['GET', 'POST'])
+def deluseracc():
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('DELETE FROM User_Auth')
+                con.commit
+                
+        return render_template('deleteaccountconf.html')
+
+@app.route('/deluseractivity', methods = ['GET', 'POST'])
+def deluseractivity():
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('DELETE FROM User_Info')
+                con.commit
+                
+        return render_template('deleteactivityconf.html')
+        
+        return
+
+@app.route('/viewuseracc', methods = ['GET', 'POST'])
+def viewuseracc():
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('SELECT*FROM User_Auth')
+                rows = cur.fetchall()
+                
+        return render_template('displayaccountinfo.html', items = rows)
+
+
+@app.route('/viewuseractivity', methods = ['GET', 'POST'])
+def viewuseractivity():
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('SELECT*FROM User_Info')
+                rows = cur.fetchall()
+                
+        return render_template('displayactivityinfo.html', items = rows)
 
 #TO SIGNUP
 @app.route('/sign_up', methods = ['GET', 'POST'])
