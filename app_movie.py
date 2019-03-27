@@ -7,7 +7,7 @@ import os
 import numpy as np
 
 #to add the nltk corpora for heroku integration
-nltk.data.path.append('/nltk_data')
+#nltk.data.path.append('/nltk_data')
 
 app = Flask(__name__)
 
