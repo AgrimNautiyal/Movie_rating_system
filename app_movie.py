@@ -6,6 +6,8 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import os
 import numpy as np
 
+#to add the nltk corpora for heroku integration
+nltk.data.path.append('./nltk_data/')
 
 app = Flask(__name__)
 
@@ -177,13 +179,15 @@ def conf_del_user_history():
                 cur.execute('DELETE FROM User_Info where UserId =?''',(username,))
                 con.commit
         return render_template('confuserinfodelete.html', uname=username)
+
+
 #TO PLAY AROUND WITH MOVIE RATING WITHOUT LOGIN
 @app.route('/results', methods=['POST'])
 def predict():
         sentence = str(request.form['review'])
         sid = SentimentIntensityAnalyzer()
         ss = sid.polarity_scores(sentence)
-
+        
         if ss['compound']<0:
                 score = 10-abs((ss['compound']*10))+0.5
         else:
