@@ -47,10 +47,65 @@ def logincheck():
                 cur.execute('SELECT Password from User_Auth where UserId =?''',(username,))
                 correct_pass = cur.fetchall()
         if(correct_pass[0][0] == password):
+                #redirect to user profile portal to start again
                 return render_template('successfullogin.html')
         else:
+                #redirect to homepage to start process again
                 return render_template('unsuccessfulloginattempt.html')
 
+        
+#AFTER SUCCESSFUL LOGIN - ACCESS USER PORTAL 
+@app.route('/portal', methods = ['GET','POST'])
+def portal_access():
+        return render_template('portallandingpage.html')
+
+#TO make a new prediction for logged in user : 
+@app.route('/makepred', methods = ['GET','POST'])
+def makepred():
+        return render_template('makepreduser.html')
+@app.route('/results_loggedin_users', methods =['GET', 'POST'])
+#THIS FUNCTION IS RESPONSIBLE FOR ADDING ALL THE USER DETAILS WHENEVER ANY PREDICTION IS MADE BY A LOGGED IN USER
+def results2():
+        username = str(request.form['UserName'])
+        sentence = str(request.form['review'])
+        sid = SentimentIntensityAnalyzer()
+        ss = sid.polarity_scores(sentence)
+        if ss['compound']<0:
+                score = 10-abs((ss['compound']*10))+0.5
+        else:
+                score = (ss['compound']*10)-0.5
+
+        #now we will add the above  details to the users info db so that he/she can view it in the history section
+
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('SELECT Password from User_Auth where UserId =?''',(username,))
+                correct_pass = cur.fetchall()
+                user_pass = correct_pass[0][0]
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('''INSERT INTO User_Info VALUES (?,?,?,?)''',(username, user_pass, sentence, score))
+                
+                
+        return render_template('results.html', res=score)
+
+
+
+#TO view user history
+@app.route('/viewhistory', methods =['GET', 'POST'])
+def view_history():
+        return render_template('history.html')
+
+@app.route('/show_history', methods=['GET', 'POST'])
+def show_history():
+        username = request.form['UserName']
+        with sqlite3.connect('softwareproject.db') as con:
+                cur = con.cursor()
+                cur.execute('SELECT Reviews, Ratings from User_Info where UserId =?''',(username,))
+                rows = cur.fetchall()
+
+        return render_template('display_history.html', items = rows, uname = username)
+        
 #TO PLAY AROUND WITH MOVIE RATING WITHOUT LOGIN
 @app.route('/results', methods=['POST'])
 def predict():
