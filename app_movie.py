@@ -195,5 +195,11 @@ def predict():
 	
         return render_template('results.html', res=score)
 
+@app.errorhandler(500)
+def page_not_found(e):
+        #in case of internal server error
+
+        return render_template('error.html')
+
 if __name__ == '__main__':
 	app.run(debug=True)
