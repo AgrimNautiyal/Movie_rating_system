@@ -1,4 +1,6 @@
 absl-py==0.4.0
+algorithmia==1.1.4
+algorithmia-api-client==1.0.1
 appdirs==1.4.3
 asn1crypto==0.24.0
 astor==0.7.1
@@ -22,6 +24,7 @@ dask==0.18.2
 decorator==4.3.0
 dill==0.2.8.2
 entrypoints==0.2.3
+enum34==1.1.6
 Flask==1.0.2
 gast==0.2.0
 grpcio==1.12.1
@@ -62,7 +65,7 @@ nbconvert==5.3.1
 nbformat==4.4.0
 networkx==2.1
 nltk==3.4
-notebook>=5.7.2
+notebook==5.6.0
 numpy==1.15.1
 olefile==0.45.1
 pandas==0.23.4
@@ -89,11 +92,11 @@ python-dateutil==2.7.3
 pytz==2018.5
 PyWavelets==0.5.2
 pywinpty==0.5.4
-PyYAML>=4.2b1
+PyYAML==3.13
 pyzmq==17.1.2
 qtconsole==4.3.1
 regex==2018.7.11
-requests>=2.20.0
+requests==2.19.1
 scikit-image==0.14.0
 scikit-learn==0.19.1
 scipy==1.1.0

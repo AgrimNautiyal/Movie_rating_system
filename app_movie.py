@@ -5,6 +5,7 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import os
 import numpy as np
+import Algorithmia
 
 #to add the nltk corpora for heroku integration
 #nltk.data.path.append('/nltk_data')
@@ -128,27 +129,37 @@ def makepred():
 def results2():
         username = str(request.form['UserName'])
         sentence = str(request.form['review'])
-        sid = SentimentIntensityAnalyzer()
-        ss = sid.polarity_scores(sentence)
-        if ss['compound']<0:
-                score = 10-abs((ss['compound']*10))+0.5
+
+        client = Algorithmia.client('sim09DxHNCRO4OzI1GYc7zX9TzD1')
+        algo = client.algo('nlp/ProfanityDetection/1.0.0')
+        algo.set_options(timeout=300) # optional
+        a= algo.pipe(sentence).result
+        if len(a.keys()) == 0:
+                
+        
+                sid = SentimentIntensityAnalyzer()
+                ss = sid.polarity_scores(sentence)
+                if ss['compound']<0:
+                        score = 10-abs((ss['compound']*10))+0.5
+                else:
+                        score = (ss['compound']*10)-0.5
+
+                #now we will add the above  details to the users info db so that he/she can view it in the history section
+
+                with sqlite3.connect('softwareproject.db') as con:
+                        cur = con.cursor()
+                        cur.execute('SELECT Password from User_Auth where UserId =?''',(username,))
+                        correct_pass = cur.fetchall()
+                        user_pass = correct_pass[0][0]
+                with sqlite3.connect('softwareproject.db') as con:
+                        cur = con.cursor()
+                        cur.execute('''INSERT INTO User_Info VALUES (?,?,?,?)''',(username, user_pass, sentence, score))
+                        
+                        
+                return render_template('results.html', res=score)
+
         else:
-                score = (ss['compound']*10)-0.5
-
-        #now we will add the above  details to the users info db so that he/she can view it in the history section
-
-        with sqlite3.connect('softwareproject.db') as con:
-                cur = con.cursor()
-                cur.execute('SELECT Password from User_Auth where UserId =?''',(username,))
-                correct_pass = cur.fetchall()
-                user_pass = correct_pass[0][0]
-        with sqlite3.connect('softwareproject.db') as con:
-                cur = con.cursor()
-                cur.execute('''INSERT INTO User_Info VALUES (?,?,?,?)''',(username, user_pass, sentence, score))
-                
-                
-        return render_template('results.html', res=score)
-
+                return render_template('profanity.html')
 
 
 #TO view user history
@@ -185,15 +196,24 @@ def conf_del_user_history():
 @app.route('/results', methods=['POST'])
 def predict():
         sentence = str(request.form['review'])
-        sid = SentimentIntensityAnalyzer()
-        ss = sid.polarity_scores(sentence)
-        
-        if ss['compound']<0:
-                score = 10-abs((ss['compound']*10))+0.5
+
+        client = Algorithmia.client('sim09DxHNCRO4OzI1GYc7zX9TzD1')
+        algo = client.algo('nlp/ProfanityDetection/1.0.0')
+        algo.set_options(timeout=300) # optional
+        a= algo.pipe(sentence).result
+        if len(a.keys()) == 0:
+
+                sid = SentimentIntensityAnalyzer()
+                ss = sid.polarity_scores(sentence)
+                
+                if ss['compound']<0:
+                        score = 10-abs((ss['compound']*10))+0.5
+                else:
+                        score = (ss['compound']*10)-0.5
+                
+                return render_template('results.html', res=score)
         else:
-                score = (ss['compound']*10)-0.5
-	
-        return render_template('results.html', res=score)
+                return render_template('profanity.html')
 
 @app.errorhandler(500)
 def page_not_found(e):
