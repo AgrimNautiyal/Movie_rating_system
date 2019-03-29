@@ -182,7 +182,7 @@ def conf_del_user_history():
 
 
 #TO PLAY AROUND WITH MOVIE RATING WITHOUT LOGIN
-@app.route('/results', methods=['GET','POST'])
+@app.route('/results', methods=['POST'])
 def predict():
         sentence = str(request.form['review'])
         sid = SentimentIntensityAnalyzer()
