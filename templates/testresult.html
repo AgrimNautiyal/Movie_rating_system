@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Results</title>
+	<title>Make prediction for a user logged in already!</title>
 <meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -35,7 +35,23 @@
 <div class="limiter" >
 					<div class="container-login100">
 						<div class="wrap-login100 p-t-50 p-b-90" style="padding-left:10px; padding-right:10px;">
-							The Movie Prediction<br><br>{{res}}
+							<form class="login100-form validate-form flex-sb flex-w" >
+								<span class="login100-form-title p-b-51">
+									make a prediction
+								</span>
+
+								
+								<div class="wrap-input100 validate-input m-b-16" data-validate = "Review is required">
+									<input class="input100" type = "text" name ="review" placeholder="Review" style="height: 200px;">
+									<span class="focus-input100"></span>
+								</div>
+								
+								
+
+								<div class="container-login100-form-btn m-t-17">
+									<button class="login100-form-btn" type=submit value='Predict rating' name='submit_btn' >
+										Submit
+									</button>
 								</div>
 
 							</form>

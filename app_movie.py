@@ -130,7 +130,7 @@ def results2():
         username = str(request.form['UserName'])
         sentence = str(request.form['review'])
 
-        client = Algorithmia.client('sim09DxHNCRO4OzI1GYc7zX9TzD1')
+        client = Algorithmia.client('simSZn2DdvecQYvltU1jrAhh2es1')
         algo = client.algo('nlp/ProfanityDetection/1.0.0')
         algo.set_options(timeout=300) # optional
         a= algo.pipe(sentence).result
@@ -190,14 +190,17 @@ def conf_del_user_history():
                 cur.execute('DELETE FROM User_Info where UserId =?''',(username,))
                 con.commit
         return render_template('confuserinfodelete.html', uname=username)
-
+#Separate rendering for rate now button
+@app.route('/testresult', methods=['GET', 'POST'])
+def testresult():
+        return render_template('testresult.html')
 
 #TO PLAY AROUND WITH MOVIE RATING WITHOUT LOGIN
 @app.route('/results', methods=['POST'])
 def predict():
         sentence = str(request.form['review'])
 
-        client = Algorithmia.client('sim09DxHNCRO4OzI1GYc7zX9TzD1')
+        client = Algorithmia.client('simSZn2DdvecQYvltU1jrAhh2es1')
         algo = client.algo('nlp/ProfanityDetection/1.0.0')
         algo.set_options(timeout=300) # optional
         a= algo.pipe(sentence).result
